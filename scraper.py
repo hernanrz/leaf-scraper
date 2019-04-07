@@ -35,7 +35,6 @@ def get_data(url):
 
 def get_aromas(strain):
     url = "https://www.leafly.com/{}/{}".format(strain["Category"], strain["UrlName"])
-    print(url)
     d = pq(url.lower())
 
     flavors = d(".flavor-name")
@@ -43,7 +42,7 @@ def get_aromas(strain):
     result = []
     for flavor in flavors:
         result.append(flavor.text[3:])
-        
+
     print(result)
     return result
 
@@ -114,12 +113,16 @@ def strain_to_row(strain):
         row.append(negative_effects[i])
 
     if "UrlName" in strain and "Category" in strain:
-        flavors = get_aromas(strain)
+        try:
+            flavors = get_aromas(strain)
+        except:
+            if "Flavors" in strain:
+                flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
+            else:
+                flavors = []
+            
+            
     # Flavors
-    # if "Flavors" in strain:
-    #     flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
-    # else:
-    #     flavors = []
 
     if len(flavors) < 3:
         fill = 3 - len(flavors)
