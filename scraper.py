@@ -40,10 +40,17 @@ def strain_to_row(strain):
     row = []
 
     # Strain name
-    row.append(strain[u"Name"])
+    if "Name" in strain:
+        row.append(strain[u"Name"])
+    else:
+        row.append("")
 
     # Strain type
-    row.append(strain[u"DisplayCategory"])
+    if "DisplayCategory" in strain:
+        row.append(strain[u"DisplayCategory"])
+    else:
+        row.append("")
+
 
     # Mental effects
     if "Tags" in strain:
