@@ -129,7 +129,7 @@ while  fetching:
         csv_data.append(row)
 
     page += 1
-    fetching = False # data[u"PagingContext"][u"HasNextPage"]
+    fetching = data[u"PagingContext"][u"HasNextPage"]
 
 with open("data.csv", "w+") as csv_file:
     writer = csv.writer(csv_file)
