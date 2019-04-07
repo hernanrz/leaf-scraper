@@ -42,8 +42,9 @@ def get_aromas(strain):
     
     result = []
     for flavor in flavors:
-        result.append = flavor.text()[3:]
-
+        result.append(flavor.text[3:])
+        
+    print(result)
     return result
 
 
@@ -76,7 +77,7 @@ def strain_to_row(strain):
         fill = 5 - len(tags)
 
         for i in range(fill):
-            tags.append("N/I")
+            tags.append("")
     
     for i in range(5):
         row.append(tags[i])
