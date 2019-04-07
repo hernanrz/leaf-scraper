@@ -1,4 +1,4 @@
-
+from pyquery import PyQuery as pq
 import csv
 import requests
 
@@ -32,6 +32,19 @@ def get_data(url):
     data = req.json()
 
     return data
+
+def get_aromas(strain):
+    url = "https://www.leafly.com/{}/{}".format(strain["Category"], strain["Name"])
+    d = pq(url.lower())
+
+    flavors = d(".flavor-name")
+    
+    result = []
+    for flavor in flavors:
+        result.append = flavor.text()[3:]
+
+    return result
+
 
 def strain_to_row(strain):
     """
@@ -98,11 +111,13 @@ def strain_to_row(strain):
     for i in range(5):
         row.append(negative_effects[i])
 
+    if "Name" in strain and "Category" in strain:
+        flavors = get_aromas(strain)
     # Flavors
-    if "Flavors" in strain:
-        flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
-    else:
-        flavors = []
+    # if "Flavors" in strain:
+    #     flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
+    # else:
+    #     flavors = []
 
     if len(flavors) < 3:
         fill = 3 - len(flavors)
