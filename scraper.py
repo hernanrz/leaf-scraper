@@ -37,8 +37,6 @@ def strain_to_row(strain):
     """
     turn a strain dict into a csv compatible row
     """
-    print(strain)
-
     row = []
 
     # Strain name
