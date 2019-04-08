@@ -112,14 +112,13 @@ def strain_to_row(strain):
     for i in range(5):
         row.append(negative_effects[i])
 
+    flavors = []
     if "UrlName" in strain and "Category" in strain:
         try:
             flavors = get_aromas(strain)
         except:
             if "Flavors" in strain:
                 flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
-            else:
-                flavors = []
             
             
     # Flavors
