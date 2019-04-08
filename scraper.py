@@ -43,7 +43,6 @@ def get_aromas(strain):
     for flavor in flavors:
         result.append(flavor.text[3:])
 
-    print(result)
     return result
 
 
