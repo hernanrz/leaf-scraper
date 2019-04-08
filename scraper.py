@@ -1,6 +1,7 @@
 from pyquery import PyQuery as pq
 import csv
 import requests
+import os.path
 
 ENDPOINT = "https://www.leafly.com/explore/page-{}/sort-alpha"
 FIRST = "https://www.leafly.com/explore/sort-alpha"
@@ -33,10 +34,11 @@ def get_data(url):
 
     return data
 
-def get_aromas(strain):
+def get_pyquery(strain):
     url = "https://www.leafly.com/{}/{}".format(strain["Category"], strain["UrlName"])
-    d = pq(url.lower())
+    return pq(url.lower())
 
+def get_aromas(d):
     flavors = d(".flavor-name")
     
     result = []
@@ -45,12 +47,40 @@ def get_aromas(strain):
 
     return result
 
+def get_items(arr):
+    items = []
+
+    for item in arr:
+        items.append(item.text)
+
+    return items
+
+def get_mental(d):
+    mentals = d("#effects-tab-content .histogram-label")
+
+    return get_items(mentals)
+
+def get_physical(d):
+    phys = d("#medical-tab-content .histogram-label")
+
+    return get_items(phys)
+
+def get_negative(d):
+    ne = d("#negatives-tab-content .histogram-label")
+
+    return get_items(ne)
 
 def strain_to_row(strain):
     """
     turn a strain dict into a csv compatible row
     """
     row = []
+    print("Processing row")
+    d = None
+    if "UrlName" in strain and "Category" in strain:
+        d = get_pyquery(strain)
+    else:
+        return [""]*20
 
     # Strain name
     if "Name" in strain:
@@ -66,10 +96,7 @@ def strain_to_row(strain):
 
 
     # Mental effects
-    if "Tags" in strain:
-        tags = [tag[u"DisplayLabel"] for tag in strain[u"Tags"]]
-    else:
-        tags = []
+    tags = get_mental(d)
 
     if len(tags) < 5:
         fill = 5 - len(tags)
@@ -81,10 +108,7 @@ def strain_to_row(strain):
         row.append(tags[i])
 
     # Physical effects
-    if "Symptoms" in strain:
-        symptoms = [symptom[u"DisplayLabel"] for symptom in strain[u"Symptoms"]]
-    else:
-        symptoms = []
+    symptoms = get_physical(d)
 
     if len(symptoms) < 5:
         fill = 5 - len(symptoms)
@@ -97,10 +121,7 @@ def strain_to_row(strain):
 
 
     # Negative effects
-    if "NegativeEffects" in strain:
-        negative_effects = [ne[u"DisplayLabel"] for ne in strain[u"NegativeEffects"]]
-    else:
-        negative_effects = []
+    negative_effects = get_negative(d)
 
     if len(negative_effects) < 5:
         fill = 5 - len(negative_effects)
@@ -112,16 +133,13 @@ def strain_to_row(strain):
         row.append(negative_effects[i])
 
     flavors = []
-    if "UrlName" in strain and "Category" in strain:
-        try:
-            flavors = get_aromas(strain)
-        except:
-            if "Flavors" in strain:
-                flavors = [ne[u"DisplayLabel"] for ne in strain[u"Flavors"]]
-            
-            
+    try:
+        flavors = get_aromas(d)
+    except:
+        flavors = []
+        
+        
     # Flavors
-
     if len(flavors) < 3:
         fill = 3 - len(flavors)
 
@@ -133,7 +151,7 @@ def strain_to_row(strain):
 
     return row
 
-csv_data = [["Strain", "Type", "MentalEffect1","MentalEffect2","MentalEffect3","MentalEffect4","MentalEffect5", "PhysicalEffect1","PhysicalEffect2","PhysicalEffect3","PhysicalEffect4","PhysicalEffect5","NegativeEffect1","NegativeEffect2","NegativeEffect3","NegativeEffect4","NegativeEffect5", "Aroma1", "Aroma4","Aroma3",]]
+csv_data = [["Strain", "Type", "MentalEffect1","MentalEffect2","MentalEffect3","MentalEffect4","MentalEffect5", "PhysicalEffect1","PhysicalEffect2","PhysicalEffect3","PhysicalEffect4","PhysicalEffect5","NegativeEffect1","NegativeEffect2","NegativeEffect3","NegativeEffect4","NegativeEffect5", "Aroma1", "Aroma2","Aroma3",]]
 
 while  fetching:
     url = ENDPOINT
