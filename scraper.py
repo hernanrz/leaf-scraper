@@ -36,6 +36,7 @@ def get_data(url):
 
 def get_pyquery(strain):
     url = "https://www.leafly.com/{}/{}".format(strain["Category"], strain["UrlName"])
+    print("GET {}".format(url))
     return pq(url.lower())
 
 def get_aromas(d):
