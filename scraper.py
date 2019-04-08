@@ -79,7 +79,10 @@ def strain_to_row(strain):
     print("Processing row")
     d = None
     if "UrlName" in strain and "Category" in strain:
-        d = get_pyquery(strain)
+        try:
+            d = get_pyquery(strain)
+        except:
+            return [""]*20
     else:
         return [""]*20
 
